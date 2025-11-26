@@ -1,6 +1,7 @@
 #include <Client/ClientBaseHelpers.h>
 #include <Client/ReplxxLineReader.h>
 #include <base/errnoToString.h>
+#include <Client/AutoCompletionBase.h>
 
 #include <IO/ReadBufferFromFile.h>
 #include <IO/WriteBufferFromString.h>
@@ -599,15 +600,25 @@ void ReplxxLineReader::setInitialText(const String & text)
     }
 }
 
-void ReplxxLineReader::setAutocompletionCallback() 
+void ReplxxLineReader::setAutocompletionCallback(AutoCompletion &autocompletion) 
 {
-    auto hints_callback = [](const String &, size_t, replxx::Replxx::Color& color)
+
+    auto hint_callback = [&autocompletion](const String &, size_t, replxx::Replxx::Color & color)
     {
         color = replxx::color::rgb666(5, 5, 0);
-        return replxx::Replxx::hints_t{"select 1 + 1;"};
+        return autocompletion.getAutocompletions<replxx::Replxx::hints_t>();
     };
 
-    rx.set_hint_callback(hints_callback);
+    auto completion_callback = [&autocompletion](const String &, size_t)
+    {
+        return autocompletion.getAutocompletions<replxx::Replxx::completions_t>();
+    };
+
+    rx.set_hint_callback(hint_callback);
+    rx.set_completion_callback(completion_callback);
+    rx.bind_key(replxx::Replxx::KEY::RIGHT, [this](char32_t code) {
+        return rx.invoke(replxx::Replxx::ACTION::COMPLETE_LINE, code);
+    });
 }
 
 }

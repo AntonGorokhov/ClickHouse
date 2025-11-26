@@ -1,5 +1,6 @@
 #include "config.h"
 
+#include <Client/AutoCompletionBase.h>
 #include <Client/ClientBase.h>
 #include <Client/ClientBaseHelpers.h>
 #include <Client/InternalTextLogs.h>
@@ -3560,8 +3561,10 @@ void ClientBase::runInteractive()
         .err_fd = stderr_fd,
     };
 
+    autocompletion.emplace();
+
     auto replxx_lr = std::make_unique<ReplxxLineReader>(std::move(options));
-    replxx_lr->setAutocompletionCallback();
+    replxx_lr->setAutocompletionCallback(*autocompletion);
 
     lr = std::move(replxx_lr);
 #else

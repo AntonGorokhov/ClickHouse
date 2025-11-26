@@ -3,6 +3,7 @@
 #include <span>
 
 #include <Client/LineReader.h>
+#include <Client/AutoCompletionBase.h>
 #include <base/strong_typedef.h>
 #include <replxx.hxx>
 
@@ -42,11 +43,12 @@ public:
     /// This is useful to determine the behavior of <ENTER> key when multiline is enabled.
     static void setLastIsDelimiter(bool flag);
 
-    void setAutocompletionCallback();
+    void setAutocompletionCallback(AutoCompletion & autocompletion);
 
     /// Set text to be prepopulated in the next readLine call
     void setInitialText(const String & text) override;
 private:
+
     InputStatus readOneLine(const String & prompt) override;
     void addToHistory(const String & line) override;
     int executeEditor(const std::string & path);

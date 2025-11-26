@@ -2,6 +2,7 @@
 
 #include "config.h"
 
+#include <Client/AutoCompletionBase.h>
 #include <Client/ProgressTable.h>
 #include <Client/Suggest.h>
 #include <IO/CompressionMethod.h>
@@ -211,6 +212,7 @@ protected:
 
     static fs::path getHistoryFilePath();
 private:
+   
     void receiveResult(ASTPtr parsed_query, Int32 signals_before_stop, bool partial_result_on_first_cancel);
     bool receiveAndProcessPacket(ASTPtr parsed_query, bool cancelled_);
     void receiveLogsAndProfileEvents(ASTPtr parsed_query);
@@ -325,7 +327,10 @@ protected:
 
     std::optional<Suggest> suggest;
     bool load_suggestions = false;
+    bool use_autocompletion = true;
     bool wait_for_suggestions_to_load = false;
+
+    std::optional<AutoCompletion> autocompletion;
 
     std::vector<String> queries; /// Queries passed via '--query'
     std::vector<String> queries_files; /// If not empty, queries will be read from these files
