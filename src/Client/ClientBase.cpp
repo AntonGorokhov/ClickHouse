@@ -3560,7 +3560,10 @@ void ClientBase::runInteractive()
         .err_fd = stderr_fd,
     };
 
-    lr = std::make_unique<ReplxxLineReader>(std::move(options));
+    auto replxx_lr = std::make_unique<ReplxxLineReader>(std::move(options));
+    replxx_lr->setAutocompletionCallback();
+
+    lr = std::move(replxx_lr);
 #else
     lr = LineReader(
         history_file,

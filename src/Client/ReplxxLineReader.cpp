@@ -24,6 +24,7 @@
 #include <filesystem>
 #include <fmt/format.h>
 #include <Common/quoteString.h>
+#include <replxx.hxx>
 #include "config.h" // USE_SKIM
 
 #if USE_SKIM
@@ -596,6 +597,17 @@ void ReplxxLineReader::setInitialText(const String & text)
     {
         rx.set_preload_buffer(text);
     }
+}
+
+void ReplxxLineReader::setAutocompletionCallback() 
+{
+    auto hints_callback = [](const String &, size_t, replxx::Replxx::Color& color)
+    {
+        color = replxx::color::rgb666(5, 5, 0);
+        return replxx::Replxx::hints_t{"select 1 + 1;"};
+    };
+
+    rx.set_hint_callback(hints_callback);
 }
 
 }
